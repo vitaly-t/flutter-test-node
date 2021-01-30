@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { promifyResolveValue } from './helper';
+import { tokenizePath } from './path-value';
 import { validationSchema } from './validation';
 const router = new Router();
 
@@ -42,9 +43,7 @@ router.post('/validate-rule', async function (req, res) {
 		if (typeof data === 'string') {
 			value = data[field];
 		} else {
-			//replace braces with dot for cases like array nested in objects
-			const formattedField = field.replace(/\[(\w+)\]/g, '.$1');
-			value = await promifyResolveValue(data, field);
+			value = promifyResolveValue(data, tokenizePath(field));
 		}
 
 		//check if data exist
